@@ -1,12 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
-    <?php include_once "barrasuperior.php"; ?>
-</body>
-</html>
+<?php
+session_start();
+require 'config.php';
+
+spl_autoload_register(function ($class) {
+    if(file_exists('controllers/'.$class.'.php')) {
+        require 'controllers/'.$class.'.php';
+    } else if (file_exists('models/'.$class.'.php')) {
+        require 'models/'.$class.'.php';
+    } else if (file_exists('core/'.$class.'.php')) {
+        require 'core/'.$class.'.php';
+    }
+});
+
+$core = new Core();
+$core->run();
