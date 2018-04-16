@@ -1,11 +1,21 @@
-<form method="post">
+<?php if($mostrar): ?>
+    <div class="error">
+        <ul>
+            <li><?= $mensagem; ?></li>
+        </ul>
+    </div>
+<?php endif; ?>
+
+<form action="<?= BASE_URL; ?>login" method="post">
     <div class="row">
-        <label for="email" class="col-2">E-mail:</label>
-        <input name="email" class="col-9" type="text" placeholder="Informe o seu email de acesso" />
+        <label for="email" class="col-3">Email:</label>
+        <input name="email" type="email" class="col-9" placeholder="Informe seu email de acesso" autofocus />
     </div>
     <div class="row">
-        <label for="senha" class="col-2">Senha:</label>
-        <input name="senha" class="col-9" type="password" placeholder="Informe a sua senha de acesso" />
+        <label for="senha" class="col-3">Senha:</label>
+        <input name="senha" type="password" class="col-9" placeholder="Informe sua senha" />
     </div>
-    <input id="btnsubmit" type="submit" value="Enviar" />
+    <div class="row">
+        <input type="submit" value="Enviar" />
+    </div>
 </form>

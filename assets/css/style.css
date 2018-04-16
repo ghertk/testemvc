@@ -33,8 +33,22 @@ nav > ul > li:hover {
     margin-bottom: 10px;
 }
 
+.btn {
+    background-color: lightgray;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
 [class*="col-"] {
     width: 100%;
+}
+
+.conteudo {
+    margin-right: 0;
+    margin-left: 0;
 }
 
 @media only screen and (min-width: 768px) {
@@ -50,6 +64,10 @@ nav > ul > li:hover {
     .col-10 {width: 83.33%;}
     .col-11 {width: 91.66%;}
     .col-12 {width: 100%;}
+    .conteudo {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
 }
 
 [class*="col-"] {
@@ -63,13 +81,49 @@ nav > ul > li:hover {
     display: table;
 }
 
-input[type=text], input[type=email], input[type=password] {
-    border-radius: 4px;
-    border-color: #999;
-    border-style: solid;
+.success ul, .error ul {
+    list-style-type: none;
+    margin: 5px;
+}
+
+.error {
+    background-color: #FF9999;
+    border: 2px solid red;
+}
+
+.success {
+    background-color: lawngreen;
+    border: 2px solid limegreen;
+}
+
+.error, .success {
+    padding: 16px 0px;
+    border-radius: 10px;
+}
+
+input, select, textarea {
+    border: 2px solid #999999;
+    border-radius: 5px;
+}
+
+select {
+    background-color: white;
+}
+
+textarea {
+    resize: none;
 }
 
 input[type=button], input[type=submit], input[type=reset] {
+    padding: 16px 32px;
+    margin-left: 5px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+button {
     padding: 16px 32px;
     margin-left: 5px;
     margin-right: 5px;
@@ -90,7 +144,57 @@ input[type=reset] {
     float: right;
 }
 
+.alert {
+    background-color: #FF9800;
+    color: white;
+}
+
 .cancel {
     background-color: #f44336;
     color: white;
+}
+
+table {
+    width: 100%;
+}
+
+table thead th {
+    border-bottom: 2px solid lightgray;
+}
+
+table tbody td {
+    text-align: center;
+}
+
+table tbody tr {
+    margin: 0;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9F9F9;
+    min-width: 25%;
+    /* padding: 12px 16px; */
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }

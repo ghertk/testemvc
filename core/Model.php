@@ -1,9 +1,9 @@
 <?php
 class Model {
-    protected $db;
+    protected $bd;
 
     public function __construct() {
         global $bd;
-        $this->db = $bd;
+        $this->bd = $bd;
     }
 }

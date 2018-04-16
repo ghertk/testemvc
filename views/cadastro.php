@@ -1,19 +1,36 @@
-<form action="<?= BASE_URL;?>cadastro/" method="post">
+<?php if($mostrar): ?>
+    <div class="error">
+        <ul>
+            <?php foreach ($mensagem as $chave => $valor) {?>
+                <li><?= $valor; ?></li>
+            <?php }?>
+        </ul>
+    </div>
+<?php endif; ?>
+
+<form method="POST" action="<?= BASE_URL; ?>cadastro">
     <div class="row">
-        <label for="nome" class="col-2">Nome:</label>
-        <input type="text" class="col-9" name="nome" placeholder="Informe seu nome" />
+        <label for="email" class="col-3">E-mail:</label>
+        <input type="email" class="col-9" name="email" placeholder="Informe seu e-mail de contato" value="<?= $email; ?>" autofocus />
     </div>
     <div class="row">
-        <label for="email" class="col-2">E-mail:</label>
-        <input type="email" class="col-9" name="email" placeholder="Informe seu email" />
+        <label for="nome" class="col-3">Nome:</label>
+        <input type="text" class="col-9" name="nome" placeholder="Informe seu nome" value="<?= $nome; ?>" />
     </div>
     <div class="row">
-        <label for="telefone" class="col-2">Telefone:</label>
-        <input type="tel" class="col-9" name="telefone" placeholder="Informe seu telefone" />
-    </div>
-    <div class="row">
-        <label for="senha" class="col-2">Senha:</label>
+        <label for="senha" class="col-3">Senha:</label>
         <input type="password" class="col-9" name="senha" placeholder="Informe sua senha" />
     </div>
-    <input type="submit" value="Enviar" />
+    <div class="row">
+        <label for="repsenha" class="col-3">Repita a senha:</label>
+        <input type="password" class="col-9" name="repsenha" placeholder="Repita a senha" />
+    </div>
+    <div class="row">
+        <label for="telefone" class="col-3">Telefone:</label>
+        <input type="text" class="col-9" name="telefone" placeholder="Informe seu telefone de contato" value="<?= $telefone; ?>" />
+    </div>
+    <div class="row">
+        <input type="submit" value="Cadastrar" />
+        <input type="reset" value="Limpar formulario" />
+    </div>
 </form>
