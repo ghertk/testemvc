@@ -17,17 +17,12 @@
         <tbody>
         <?php foreach ($itens as $item) {?>
             <tr>
-                <td></td>
+                <td><img src="<?= BASE_URL.'/assets/imagens/'.$item['imgsrc']; ?>" /></td>
                 <td><?= $item['titulo']; ?></td>
                 <td><?= $item['valor']; ?></td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn">Ações</button>
-                        <div class="dropdown-content">
-                            <a href="<?= BASE_URL; ?>anuncios/alterar/<?= $item['id']; ?>" class="alert">Altrar</a>
-                            <a href="<?= BASE_URL; ?>anuncios/remover/<?= $item['id']; ?>" class="cancel">Remover</a>
-                        </div>
-                    </div>
+                    <a href="<?= BASE_URL; ?>anuncios/alterar/<?= $item['id']; ?>" class="alert btn btn-inline">Altrar</a>
+                    <a href="<?= BASE_URL; ?>anuncios/remover/<?= $item['id']; ?>" class="cancel btn btn-inline">Remover</a>
                 </td>
             </tr>
         <?php } ?>

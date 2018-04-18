@@ -1,13 +1,28 @@
 <?php
 class Anuncio extends Model {
-    public function cadastrar($categoria, $titulo, $valor, $descricao, $estado, $usuario) {
-        $sql = $this->bd->prepare("INSERT INTO anuncio (usuario_id, categoria_id, titulo, valor, descricao, estado) VALUES (:usuario, :categoria, :titulo, :valor, :descricao, :estado)");
-        $sql->bindValue(':usuario', $usuario);
-        $sql->bindValue(':categoria', $categoria);
-        $sql->bindValue(':titulo', $titulo);
-        $sql->bindValue(':valor', $valor);
-        $sql->bindValue(':descricao', $descricao);
-        $sql->bindValue(':estado', $estado);
+    private $categoriaId;
+    private $titulo;
+    private $valor;
+    private $descricao;
+    private $estado;
+    private $imgname;
+    private $usuario;
+
+    public function __construct($usuario) {
+        global $bd;
+        $this->bd = $bd;
+        $this->usuario = $usuario;
+    }
+
+    public function cadastrar() {
+        $sql = $this->bd->prepare("INSERT INTO anuncio (usuario_id, categoria_id, titulo, valor, descricao, estado, imgsrc) VALUES (:usuario, :categoria, :titulo, :valor, :descricao, :estado, :imagem)");
+        $sql->bindValue(':usuario', $this->usuario);
+        $sql->bindValue(':categoria', $this->categoria);
+        $sql->bindValue(':titulo', $this->titulo);
+        $sql->bindValue(':valor', $this->valor);
+        $sql->bindValue(':descricao', $this->descricao);
+        $sql->bindValue(':estado', $this->estado);
+        $sql->bindValue(':imagem', $this->imgname);
         $sql->execute();
         return true;
     }
@@ -31,20 +46,85 @@ class Anuncio extends Model {
         $sql->execute();
         return true;
     }
+    public function getCategoriaId() {
+        return $this->categoriaId;
+    }
 
-    public function getListaUsuario($usuario) {
+    public function setCategoriaId($categoriaId) {
+        $this->categoriaId = $categoriaId;
+    }
+
+    public function getTitulo() {
+        return $this->titulo;
+    }
+
+    public function setTitulo($titulo) {
+        $this->titulo = $titulo;
+    }
+
+
+
+    public function getValor() {
+        return $this->valor;
+    }
+
+    public function setValor($valor) {
+        $this->valor = $valor;
+    }
+
+    public function getDescricao() {
+        return $this->descricao;
+    }
+
+    public function setDescricao($descricao) {
+        $this->descricao = $descricao;
+    }
+
+    public function getEstado() {
+        return $this->estado;
+    }
+
+    public function setEstado($estado){
+        $this->estado = $estado;
+    }
+
+    public function getImgname() {
+        return $this->imgname;
+    }
+
+    public function setImgname($imgname) {
+        $this->imgname = $imgname;
+    }
+
+    public function getUsuario() {
+        return $this->usuario;
+    }
+
+    public function getListaUsuario() {
         $sql = $this->bd->prepare("SELECT * FROM anuncio WHERE usuario_id = :usuario");
-        $sql->bindValue(':usuario', $usuario);
+        $sql->bindValue(':usuario', $this->usuario);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getLista() {}
+    public function getLista() {
+        $sql = $this->bd->prepare("SELECT * FROM anuncio");
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function getAnuncio($id) {
         $sql = $this->bd->prepare("SELECT * FROM anuncio WHERE id = :id");
         $sql->bindValue(":id", $id);
         $sql->execute();
-        return $sql->fetchAll(PDO::FETCH_ASSOC);
+        $anuncio = $sql->fetchAll(PDO::FETCH_ASSOC);
+        $anuncio = $anuncio[0];
+        $this->usuario = $anuncio['usuario_id'];
+        $this->categoriaId = $anuncio['categoria_id'];
+        $this->titulo = $anuncio['titulo'];
+        $this->descricao = $anuncio['descricao'];
+        $this->valor = $anuncio['valor'];
+        $this->estado = $anuncio['estado'];
+        $this->imgname = $anuncio['imgsrc'];
     }
 }

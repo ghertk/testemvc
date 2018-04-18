@@ -10,18 +10,19 @@ CREATE TABLE usuario(
   telefone VARCHAR(30)
 );
 
-CREATE TABLE categorias(
+CREATE TABLE categoria(
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
   nome VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE anuncios(
+CREATE TABLE anuncio(
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
   usuario_id INTEGER,
   FOREIGN KEY(usuario_id) REFERENCES usuario(id),
   categoria_id INTEGER,
   FOREIGN KEY(categoria_id) REFERENCES usuario(id),
   titulo VARCHAR(100),
+  imgsrc VARCHAR(50),
   descricao TEXT,
   valor FLOAT,
   estado INTEGER

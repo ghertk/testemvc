@@ -1,139 +1,96 @@
 <?php
 class anunciosController extends Controller {
     public function index() {
-        $anuncio = new Anuncio();
+        $anuncio = new Anuncio($_SESSION['cLogin']);
         $dados = array(
-            'itens' => $anuncio->getListaUsuario($_SESSION['cLogin'])
+            'itens' => $anuncio->getListaUsuario()
         );
         $this->loadTemplate('anuncios', $dados);
     }
 
     public function criar() {
         $categoria = new Categoria();
-        $anuncio = new Anuncio();
+        $retorno = $this->validarFormularioAnuncio();
         $dados = array(
-            'mensagem' => array(),
-            'mostrar' => false
+            'anuncio' => $retorno[0],
+            'mensagens' => $retorno[1],
+            'erros' => $retorno[2]
         );
-        if (!empty($_POST)) {
-            $mensagens = array();
-            if (isset($_POST['categoria']) && !empty($_POST['categoria'])) {
-                $dados['categoria'] = $_POST['categoria'];
-            } else {
-                $mensagens[] = 'A categoria deve ser selecionada';
-                $dados['mostrar'] = true;
-            }
-            if (isset($_POST['titulo']) && !empty($_POST['titulo'])) {
-                $dados['titulo'] = $_POST['titulo'];
-            } else {
-                $mensagens[] = 'O campo de titulo deve ser peenchido';
-                $dados['mostrar'] = true;
-            }
-            if (isset($_POST['valor']) && !empty($_POST['valor'])) {
-                if(is_numeric($_POST['valor'])) {
-                    $dados['valor'] = $_POST['valor'];
-                } else {
-                    $mensagens[] = 'Valor invalido';
-                    $dados['mostrar'] = true;
-                }
-            } else {
-                $mensagens[] = 'O campo de valor deve ser preenchido';
-                $dados['mostrar'] = true;
-            }
-            if (isset($_POST['descricao']) && !empty($_POST['descricao'])) {
-                $dados['descricao'] = $_POST['descricao'];
-            } else {
-                $mensagens[] = 'O campo de descrição deve ser preenchido';
-                $dados['mostrar'] = true;
-            }
-            if (isset($_POST['estado']) && !empty($_POST['estado'])) {
-                $dados['estado'] = $_POST['estado'];
-            } else {
-                $mensagens[] = 'O estado deve ser selecionado';
-                $dados['mostrar'] = true;
-            }
-            if(!empty($dados['categoria']) && !empty($dados['titulo']) && !empty($dados['valor']) &&
-                !empty($dados['descricao']) && !empty($dados['estado'])) {
-                if ($anuncio->cadastrar($dados['categoria'], $dados['titulo'], $dados['valor'], $dados['descricao'], $dados['estado'], $_SESSION['cLogin'])) {
-                    header('Location: '.BASE_URL.'anuncios');
-                    die();
-                }
-            }
-            $dados['mensagem'] = $mensagens;
-        }
         $dados['categorias'] = $categoria->getLista();
         $this->loadTemplate('criarAnuncio', $dados);
     }
 
-    public function alterar($param) {
-        $anuncio = new Anuncio();
-        $categoria = new Categoria();
-        $dados = array(
-            'mensagem' => array(),
-            'mostrar' => false
-        );
-        $item = $anuncio->getAnuncio($param);
-        $item = $item[0];
-        if ($item['usuario_id'] != $_SESSION['cLogin']) {
-            echo "Acesso negado";
-            die();
-        }
-        if (empty($_POST)) {
-            $aux = $anuncio->getAnuncio($param);
-            $dados['anuncio'] = $aux[0];
-        } else {
-            $mensagens = array();
-            if (isset($_POST['categoria']) && !empty($_POST['categoria'])) {
-                $dados['anuncio']['categoria_id'] = $_POST['categoria'];
+    public function validarFormularioAnuncio() {
+        $anuncio = new Anuncio($_SESSION['cLogin']);
+        $mensagens = array();
+        $erros = false;
+        if (!empty($_POST)) {
+            if ($this->validarCategoria($_POST['categoria']) ) {
+                $anuncio->setCategoriaId($_POST['categoria']);
             } else {
-                $mensagens[] = 'A categoria deve ser selecionada';
-                $dados['mostrar'] = true;
+                $mensagens[] = "Categoria invalida";
+                $erros = true;
             }
-            if (isset($_POST['titulo']) && !empty($_POST['titulo'])) {
-                $dados['anuncio']['titulo'] = $_POST['titulo'];
+            if ($this->validarTitulo($_POST['titulo'])) {
+                $anuncio->setTitulo($_POST['titulo']);
             } else {
-                $mensagens[] = 'O campo de titulo deve ser peenchido';
-                $dados['mostrar'] = true;
+                $mensagens[] = "Titulo invalido";
+                $erros = true;
             }
-            if (isset($_POST['valor']) && !empty($_POST['valor'])) {
-                if(is_numeric($_POST['valor'])) {
-                    $dados['anuncio']['valor'] = $_POST['valor'];
-                } else {
-                    $mensagens[] = 'Valor invalido';
-                    $dados['mostrar'] = true;
-                }
+            if ($this->validarValor($_POST['valor'])) {
+                $anuncio->setValor($_POST['valor']);
             } else {
-                $mensagens[] = 'O campo de valor deve ser preenchido';
-                $dados['mostrar'] = true;
+                $mensagens[] = "Valor invalido";
+                $erros = true;
             }
-            if (isset($_POST['descricao']) && !empty($_POST['descricao'])) {
-                $dados['anuncio']['descricao'] = $_POST['descricao'];
+            if ($this->validarDescricao($_POST['descricao'])) {
+                $anuncio->setDescricao($_POST['descricao']);
             } else {
-                $mensagens[] = 'O campo de descrição deve ser preenchido';
-                $dados['mostrar'] = true;
+                $mensagens[] = "Descrição invalida";
+                $erros = true;
             }
-            if (isset($_POST['estado']) && !empty($_POST['estado'])) {
-                $dados['anuncio']['estado'] = $_POST['estado'];
+            if ($this->validarEstado($_POST['estado'])) {
+                $anuncio->setEstado($_POST['estado']);
             } else {
-                $mensagens[] = 'O estado deve ser selecionado';
-                $dados['mostrar'] = true;
+                $mensagens[] = "Estado invalido";
+                $erros = true;
             }
-            if(!empty($dados['anuncio']['categoria']) && !empty($dados['anuncio']['titulo']) && !empty($dados['anuncio']['valor']) &&
-                !empty($dados['anuncio']['descricao']) && !empty($dados['anuncio']['estado'])) {
-                if ($anuncio->alterar($param, $dados['anuncio']['categoria'], $dados['anuncio']['titulo'], $dados['anuncio']['valor'], $dados['anuncio']['descricao'],
-                    $dados['anuncio']['estado'], $_SESSION['cLogin'])) {
+            $imgname = $this->validarImagem($_FILES['imagem']);
+            if ($imgname != '') {
+                $anuncio->setImgname($imgname);
+            } else {
+                $mensagens[] = "Arquivo invalido";
+                $erros = true;
+            }
+            if(!$erros) {
+                if ($anuncio->cadastrar()) {
                     header('Location: '.BASE_URL.'anuncios');
                     die();
                 }
             }
-            $dados['mensagem'] = $mensagens;
+        }
+        return array($anuncio, $mensagens, $erros);
+    }
+
+    public function alterar($param) {
+        $anuncio = new Anuncio($_SESSION['cLogin']);
+        $categoria = new Categoria();
+        $dados = array(
+            'anuncio' => $anuncio,
+            'mensagem' => array(),
+            'mostrar' => false
+        );
+        $anuncio->getAnuncio($param);
+        if ($anuncio->getUsuario() != $_SESSION['cLogin']) {
+            echo "Acesso negado";
+            die();
         }
         $dados['categorias'] = $categoria->getLista();
         $this->loadTemplate('alterarAnuncio', $dados);
     }
 
     public function remover($param) {
-        $anuncio = new Anuncio();
+        $anuncio = new Anuncio($_SESSION['cLogin']);
         $item = $anuncio->getAnuncio($param);
         $item = $item[0];
         if ($item['usuario_id'] == $_SESSION['cLogin']) {
@@ -143,5 +100,60 @@ class anunciosController extends Controller {
         } else {
             echo "Acesso negado";
         }
+    }
+
+    private function validarCategoria($categoria) {
+        if (isset($categoria) && !empty($categoria)) {
+            return true;
+        }
+        return false;
+    }
+
+    private function validarTitulo($titulo) {
+        if (isset($titulo) && !empty($titulo)) {
+            return true;
+        }
+        return false;
+    }
+
+    private function validarValor($valor) {
+        if (isset($valor) && !empty($valor)) {
+            if(is_numeric($valor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function validarDescricao($descricao) {
+        if (isset($descricao) && !empty($descricao)) {
+            return true;
+        }
+        return false;
+    }
+
+    private function validarEstado($estado){
+        if (isset($estado) && !empty($estado)) {
+            return true;
+        }
+        return false;
+    }
+
+    private function validarImagem($imagem) {
+        $nomeimg = '';
+        if (isset($imagem['tmp_name']) && !empty($imagem['tmp_name'])) {
+            $nomeimg = md5($imagem['tmp_name'] + rand(0, 99999));
+            if ($imagem['type'] == "image/jpeg") {
+                $extencao = '.jpeg';
+                $nomeimg = $nomeimg.$extencao;
+                move_uploaded_file($imagem['tmp_name'], '/var/www/html/assets/imagens/'.$nomeimg);
+            }
+            if ($imagem['type'] == "image/png") {
+                $extencao = '.png';
+                $nomeimg = $nomeimg.$extencao;
+                move_uploaded_file($imagem['tmp_name'], '/var/www/html/assets/imagens/'.$nomeimg);
+            }
+        }
+        return $nomeimg;
     }
 }
