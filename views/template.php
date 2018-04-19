@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <title>Pagina</title>
+    <meta name="description" content="Site de classificados" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keyword" content="anuncio,classificado,venda,vende-se" />
+    <meta name="author" content="Ghért Bergler König" />
     <link rel="stylesheet" type="text/css" href="<?= BASE_URL; ?>assets/css/style.css" />
 </head>
 <body>
@@ -19,8 +22,8 @@
             <?php endif; ?>
         </ul>
     </nav>
-    <div class="conteudo">
+    <main class="conteudo">
         <?php $this->loadViewInTemplate($viewName, $viewData); ?>
-    </div>
+    </main>
 </body>
 </html>

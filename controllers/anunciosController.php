@@ -1,9 +1,9 @@
 <?php
 class anunciosController extends Controller {
     public function index() {
-        $anuncio = new Anuncio($_SESSION['cLogin']);
+        $anuncio = new Anuncio();
         $dados = array(
-            'itens' => $anuncio->getListaUsuario()
+            'itens' => $anuncio->getListaUsuario($_SESSION['cLogin'])
         );
         $this->loadTemplate('anuncios', $dados);
     }
@@ -11,19 +11,86 @@ class anunciosController extends Controller {
     public function criar() {
         $categoria = new Categoria();
         $retorno = $this->validarFormularioAnuncio();
+        $anuncio = $retorno[0];
+        $erros = $retorno[2];
+
+        if (!empty($_POST)) {
+            if(!$erros) {
+                if ($anuncio->cadastrar()) {
+                     header('Location: '.BASE_URL.'anuncios');
+                     die();
+                }
+            }
+        }
+
         $dados = array(
-            'anuncio' => $retorno[0],
+            'anuncio' => $anuncio,
             'mensagens' => $retorno[1],
-            'erros' => $retorno[2]
+            'erros' => $erros
         );
+
         $dados['categorias'] = $categoria->getLista();
         $this->loadTemplate('criarAnuncio', $dados);
     }
 
+    public function alterar($param) {
+        $categoria = new Categoria();
+        $retorno = $this->validarFormularioAnuncio();
+        $anuncio = $retorno[0];
+        $erros = $retorno[2];
+
+        if (!empty($_POST)) {
+            if(!$erros) {
+                if ($anuncio->alterar($param)) {
+                    header('Location: '.BASE_URL.'anuncios');
+                    die();
+                }
+            }
+        }
+
+        $dados = array(
+            'anuncio' => $anuncio,
+            'mensagem' => $retorno[1],
+            'erros' => $erros
+        );
+
+        $anuncio->getAnuncio($param);
+        if ($anuncio->getUsuario() != $_SESSION['cLogin']) {
+            echo "Acesso negado";
+            die();
+        }
+
+        $dados['categorias'] = $categoria->getLista();
+        $this->loadTemplate('alterarAnuncio', $dados);
+    }
+
+    public function mostrar($param) {
+        $anuncio = new Anuncio();
+        $anuncio->getAnuncio($param);
+        $categoria = new Categoria();
+        $categorias = $categoria->getLista();
+        foreach ($categorias as $categoria) {
+            if ($categoria['id'] == $anuncio->getCategoriaId()) {
+                $nome = $categoria['nome'];
+                break;
+            }
+        }
+
+        $usuario = new Usuario();
+        $dados = array(
+            'anuncio' => $anuncio,
+            'catnome' => $nome,
+            'usuario' => $usuario->getUsuario($anuncio->getUsuario())
+        );
+        $this->loadTemplate('mostrarAnuncio', $dados);
+    }
+
     public function validarFormularioAnuncio() {
-        $anuncio = new Anuncio($_SESSION['cLogin']);
+        $anuncio = new Anuncio();
+        $anuncio->setUsuario($_SESSION['cLogin']);
         $mensagens = array();
         $erros = false;
+
         if (!empty($_POST)) {
             if ($this->validarCategoria($_POST['categoria']) ) {
                 $anuncio->setCategoriaId($_POST['categoria']);
@@ -31,68 +98,52 @@ class anunciosController extends Controller {
                 $mensagens[] = "Categoria invalida";
                 $erros = true;
             }
+
             if ($this->validarTitulo($_POST['titulo'])) {
                 $anuncio->setTitulo($_POST['titulo']);
             } else {
                 $mensagens[] = "Titulo invalido";
                 $erros = true;
             }
+
             if ($this->validarValor($_POST['valor'])) {
                 $anuncio->setValor($_POST['valor']);
             } else {
                 $mensagens[] = "Valor invalido";
                 $erros = true;
             }
+
             if ($this->validarDescricao($_POST['descricao'])) {
                 $anuncio->setDescricao($_POST['descricao']);
             } else {
                 $mensagens[] = "Descrição invalida";
                 $erros = true;
             }
+
             if ($this->validarEstado($_POST['estado'])) {
                 $anuncio->setEstado($_POST['estado']);
             } else {
                 $mensagens[] = "Estado invalido";
                 $erros = true;
             }
+
             $imgname = $this->validarImagem($_FILES['imagem']);
             if ($imgname != '') {
-                $anuncio->setImgname($imgname);
-            } else {
-                $mensagens[] = "Arquivo invalido";
-                $erros = true;
-            }
-            if(!$erros) {
-                if ($anuncio->cadastrar()) {
-                    header('Location: '.BASE_URL.'anuncios');
-                    die();
+                if ($erros) {
+                    unlink('/var/www/html/assets/imagens/'.$imgname);
+                } else {
+                    $anuncio->setImgname($imgname);
                 }
             }
         }
         return array($anuncio, $mensagens, $erros);
     }
 
-    public function alterar($param) {
-        $anuncio = new Anuncio($_SESSION['cLogin']);
-        $categoria = new Categoria();
-        $dados = array(
-            'anuncio' => $anuncio,
-            'mensagem' => array(),
-            'mostrar' => false
-        );
-        $anuncio->getAnuncio($param);
-        if ($anuncio->getUsuario() != $_SESSION['cLogin']) {
-            echo "Acesso negado";
-            die();
-        }
-        $dados['categorias'] = $categoria->getLista();
-        $this->loadTemplate('alterarAnuncio', $dados);
-    }
-
     public function remover($param) {
-        $anuncio = new Anuncio($_SESSION['cLogin']);
+        $anuncio = new Anuncio();
         $item = $anuncio->getAnuncio($param);
         $item = $item[0];
+
         if ($item['usuario_id'] == $_SESSION['cLogin']) {
             $anuncio->remover($param);
             header('Location: '.BASE_URL.'anuncios');
@@ -148,6 +199,7 @@ class anunciosController extends Controller {
                 $nomeimg = $nomeimg.$extencao;
                 move_uploaded_file($imagem['tmp_name'], '/var/www/html/assets/imagens/'.$nomeimg);
             }
+
             if ($imagem['type'] == "image/png") {
                 $extencao = '.png';
                 $nomeimg = $nomeimg.$extencao;

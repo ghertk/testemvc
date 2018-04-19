@@ -187,30 +187,34 @@ input[type=reset] {
 .list-item {
     display: inline-block;
     border: 1px #999999 solid;
-    width: 95%;
+    width: 100%;
     background-color: #fafafa;
-    min-height: 50px;
-    max-height: 150px;
+    height: 150px;
 }
 
 .list-item .imagem {
     align-content: center;
-    min-width: 25%;
+    width: 25%;
+    height: 100%;
     float: left;
-    border-right: 1px #999999 solid;
+}
+
+.list-item .imagem img {
+    width: 100%;
 }
 
 .list-item .info {
     align-content: center;
     text-decoration: none;
-    border-right: 1px #999999 solid;
     float: left;
-    min-width: 50%;
+    width: 50%;
 }
 
 .list-item .preco {
     align-content: center;
-    min-width: 25%;
+    height: 100%;
+    overflow: hidden;
+    width: 25%;
 }
 .list-item .preco:after {
     clear: both;
@@ -241,3 +245,5 @@ table tbody tr {
 tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+
+

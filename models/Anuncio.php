@@ -8,16 +8,14 @@ class Anuncio extends Model {
     private $imgname;
     private $usuario;
 
-    public function __construct($usuario) {
-        global $bd;
-        $this->bd = $bd;
-        $this->usuario = $usuario;
+    public function __construct() {
+        parent::__construct();
     }
 
     public function cadastrar() {
         $sql = $this->bd->prepare("INSERT INTO anuncio (usuario_id, categoria_id, titulo, valor, descricao, estado, imgsrc) VALUES (:usuario, :categoria, :titulo, :valor, :descricao, :estado, :imagem)");
         $sql->bindValue(':usuario', $this->usuario);
-        $sql->bindValue(':categoria', $this->categoria);
+        $sql->bindValue(':categoria', $this->categoriaId);
         $sql->bindValue(':titulo', $this->titulo);
         $sql->bindValue(':valor', $this->valor);
         $sql->bindValue(':descricao', $this->descricao);
@@ -27,14 +25,15 @@ class Anuncio extends Model {
         return true;
     }
 
-    public function alterar($id, $categoria, $titulo, $valor, $descricao, $estado, $usuario) {
-        $sql = $this->bd->prepare("UPDATE anuncio SET categoria_id = :categoria, titulo = :titulo, valor = :valor, descricao = :descricao, estado = :estado WHERE usuario_id = :usuario and id = :id");
-        $sql->bindValue(":categoria", $categoria);
-        $sql->bindValue(":titulo", $titulo);
-        $sql->bindValue(":valor", $valor);
-        $sql->bindValue(":descricao", $descricao);
-        $sql->bindValue(":estado", $estado);
-        $sql->bindValue(":usuario", $usuario);
+    public function alterar($id) {
+        $sql = $this->bd->prepare("UPDATE anuncio SET categoria_id = :categoria, titulo = :titulo, valor = :valor, descricao = :descricao, estado = :estado, imgsrc = :imagem WHERE usuario_id = :usuario and id = :id");
+        $sql->bindValue(":categoria", $this->categoriaId);
+        $sql->bindValue(":titulo", $this->titulo);
+        $sql->bindValue(":valor", $this->valor);
+        $sql->bindValue(":descricao", $this->descricao);
+        $sql->bindValue(":estado", $this->estado);
+        $sql->bindValue(":usuario", $this->usuario);
+        $sql->bindValue(':imagem', $this->imgname);
         $sql->bindValue(":id", $id);
         $sql->execute();
         return true;
@@ -61,8 +60,6 @@ class Anuncio extends Model {
     public function setTitulo($titulo) {
         $this->titulo = $titulo;
     }
-
-
 
     public function getValor() {
         return $this->valor;
@@ -100,9 +97,13 @@ class Anuncio extends Model {
         return $this->usuario;
     }
 
-    public function getListaUsuario() {
+    public function setUsuario($usuario) {
+        $this->usuario = $usuario;
+    }
+
+    public function getListaUsuario($usuarioId) {
         $sql = $this->bd->prepare("SELECT * FROM anuncio WHERE usuario_id = :usuario");
-        $sql->bindValue(':usuario', $this->usuario);
+        $sql->bindValue(':usuario', $usuarioId);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }

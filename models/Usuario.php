@@ -30,4 +30,27 @@ class Usuario extends Model {
         $sql->execute();
         return $sql->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getUsuario($id) {
+        $sql = $this->bd->prepare("SELECT * FROM usuario WHERE id = :id");
+        $sql->bindValue(':id', $id);
+        $sql->execute();
+        $usuario = $sql->fetch(PDO::FETCH_ASSOC);
+        $this->nome = $usuario['nome'];
+        $this->telefone = $usuario['telefone'];
+        $this->email = $usuario['email'];
+        return $this;
+    }
+
+    public function getNome() {
+        return $this->nome;
+    }
+
+    public function getEmail() {
+        return $this->email;
+    }
+
+    public function getTelefone() {
+        return $this->telefone;
+    }
 }

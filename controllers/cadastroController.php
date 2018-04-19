@@ -3,6 +3,9 @@ class cadastroController extends Controller {
     public function index() {
         $usuario = new Usuario();
         $dados = array(
+            'nome' => '',
+            'email' => '',
+            'telefone' => '',
             'mensagem' => array(),
             'mostrar' => false
         );
