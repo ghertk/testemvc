@@ -1,18 +1,30 @@
 <?php
 class anunciosController extends Controller {
+
     public function index() {
+        Core::isLogado();
+
         $anuncio = new Anuncio();
         $dados = array(
             'itens' => $anuncio->getListaUsuario($_SESSION['cLogin'])
         );
+
         $this->loadTemplate('anuncios', $dados);
     }
 
     public function criar() {
+        Core::isLogado();
+
         $categoria = new Categoria();
         $retorno = $this->validarFormularioAnuncio();
+        $imagem = new Imagem();
         $anuncio = $retorno[0];
         $erros = $retorno[2];
+
+        if (!empty($_FILES['imagem'])) {
+            $imagem->criar($_FILES['imagem']);
+            $anuncio->setImgname($imagem->getNome());
+        }
 
         if (!empty($_POST)) {
             if(!$erros) {
@@ -34,10 +46,19 @@ class anunciosController extends Controller {
     }
 
     public function alterar($param) {
+        Core::isLogado();
+
         $categoria = new Categoria();
         $retorno = $this->validarFormularioAnuncio();
         $anuncio = $retorno[0];
         $erros = $retorno[2];
+        $imagem = new Imagem();
+
+        if (!empty($_FILES['imagem'])) {
+            $anuncio->buscarImgname($param);
+            $imagem->alterar($_FILES['imagem'], $anuncio->getImgname());
+            $anuncio->setImgname($imagem->getNome());
+        }
 
         if (!empty($_POST)) {
             if(!$erros) {
@@ -126,30 +147,22 @@ class anunciosController extends Controller {
                 $mensagens[] = "Estado invalido";
                 $erros = true;
             }
-
-            $imgname = $this->validarImagem($_FILES['imagem']);
-            if ($imgname != '') {
-                if ($erros) {
-                    unlink('/var/www/html/assets/imagens/'.$imgname);
-                } else {
-                    $anuncio->setImgname($imgname);
-                }
-            }
         }
         return array($anuncio, $mensagens, $erros);
     }
 
     public function remover($param) {
+        Core::isLogado();
         $anuncio = new Anuncio();
-        $item = $anuncio->getAnuncio($param);
-        $item = $item[0];
+        $anuncio->getAnuncio($param);
+        $imagem = new Imagem();
+        $imagem->remover($anuncio->getImgname());
 
-        if ($item['usuario_id'] == $_SESSION['cLogin']) {
+        if ($anuncio->getUsuario() == $_SESSION['cLogin']) {
+            echo "ok";
             $anuncio->remover($param);
             header('Location: '.BASE_URL.'anuncios');
             die();
-        } else {
-            echo "Acesso negado";
         }
     }
 
@@ -188,24 +201,5 @@ class anunciosController extends Controller {
             return true;
         }
         return false;
-    }
-
-    private function validarImagem($imagem) {
-        $nomeimg = '';
-        if (isset($imagem['tmp_name']) && !empty($imagem['tmp_name'])) {
-            $nomeimg = md5($imagem['tmp_name'] + rand(0, 99999));
-            if ($imagem['type'] == "image/jpeg") {
-                $extencao = '.jpeg';
-                $nomeimg = $nomeimg.$extencao;
-                move_uploaded_file($imagem['tmp_name'], '/var/www/html/assets/imagens/'.$nomeimg);
-            }
-
-            if ($imagem['type'] == "image/png") {
-                $extencao = '.png';
-                $nomeimg = $nomeimg.$extencao;
-                move_uploaded_file($imagem['tmp_name'], '/var/www/html/assets/imagens/'.$nomeimg);
-            }
-        }
-        return $nomeimg;
     }
 }

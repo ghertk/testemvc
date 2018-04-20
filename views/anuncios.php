@@ -17,11 +17,11 @@
         <tbody>
         <?php foreach ($itens as $item) {?>
             <tr>
-                <td><img src="<?= BASE_URL.'/assets/imagens/'.$item['imgsrc']; ?>" /></td>
+                <td><img src="<?= BASE_URL.'assets/imagens/'?><?=($item['imgsrc'] != '') ? $item['imgsrc'] : 'default.jpg'; ?>" /></td>
                 <td><?= $item['titulo']; ?></td>
                 <td><?= $item['valor']; ?></td>
                 <td>
-                    <a href="<?= BASE_URL; ?>anuncios/alterar/<?= $item['id']; ?>" class="alert btn btn-inline">Altrar</a>
+                    <a href="<?= BASE_URL; ?>anuncios/alterar/<?= $item['id']; ?>" class="alert btn btn-inline">Alterar</a>
                     <a href="<?= BASE_URL; ?>anuncios/remover/<?= $item['id']; ?>" class="cancel btn btn-inline">Remover</a>
                 </td>
             </tr>

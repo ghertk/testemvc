@@ -200,7 +200,11 @@ input[type=reset] {
 }
 
 .list-item .imagem img {
-    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .list-item .info {

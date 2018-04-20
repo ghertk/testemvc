@@ -45,6 +45,15 @@ class Anuncio extends Model {
         $sql->execute();
         return true;
     }
+
+    public function buscarImgname($id) {
+        $sql = $this->bd->prepare("SELECT imgsrc FROM anuncio WHERE id = :id");
+        $sql->bindValue(":id", $id);
+        $sql->execute();
+        $this->imgname = $sql->fetch(PDO::FETCH_ASSOC)['imgsrc'];
+        return true;
+    }
+
     public function getCategoriaId() {
         return $this->categoriaId;
     }
@@ -110,6 +119,44 @@ class Anuncio extends Model {
 
     public function getLista() {
         $sql = $this->bd->prepare("SELECT * FROM anuncio");
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getListaFiltro($filtros) {
+        $where = "";
+        if (!empty($filtros['categoria'])) {
+            $categoria = $filtros['categoria'];
+            $where .= "AND categoria_id = :categoria";
+        }
+
+        if (!empty($filtros['minpreco'])) {
+            $min = $filtros['minpreco'];
+        } else {
+            $min = 0;
+        }
+
+        if (!empty($filtros['maxpreco'])) {
+            $max = $filtros['maxpreco'];
+        } else {
+            $max = $this->bd->query("SELECT max(valor) FROM anuncio")->fetch(PDO::FETCH_ASSOC);
+            $max = $max['max(valor)'];
+        }
+
+        if (!empty($filtros['estado'])) {
+            $estado = $filtros['estado'];
+            $where .= "AND estado = :estado";
+        }
+
+        $sql = $this->bd->prepare("SELECT * FROM anuncio WHERE valor >= :min AND valor <= :max ".$where);
+        if (isset($categoria)) {
+            $sql->bindValue(':categoria', $categoria);
+        }
+        $sql->bindValue(':min', $min);
+        $sql->bindValue(':max', $max);
+        if (isset($estado)) {
+            $sql->bindValue(':estado', $estado);
+        }
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }

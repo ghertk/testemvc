@@ -32,4 +32,11 @@ class Core {
         $controller = new $currentController();
         call_user_func_array(array($controller, $currentAction), $params);
     }
+
+    public static function isLogado() {
+        if (!isset($_SESSION['cLogin'])) {
+            header('Location: '.BASE_URL);
+            die();
+        }
+    }
 }

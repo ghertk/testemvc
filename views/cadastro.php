@@ -1,4 +1,4 @@
-<?php if($mostrar): ?>
+<?php if($erro): ?>
     <div class="error">
         <ul>
             <?php foreach ($mensagem as $chave => $valor) {?>
