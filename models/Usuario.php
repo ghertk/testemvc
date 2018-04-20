@@ -2,7 +2,6 @@
 class Usuario extends Model {
     private $nome;
     private $email;
-    private $senha;
     private $telefone;
 
     public function cadastrar($nome, $email, $senha, $telefone) {

@@ -11,7 +11,7 @@
 <form method="POST" enctype="multipart/form-data">
     <div class="row">
         <label for="categoria" class="col-3">Categoria:</label>
-        <select name="categoria" class="col-9" autofocus>
+        <select name="categoria" id="categoria" class="col-9" autofocus>
             <option value="">Escolha um categoria</option>
             <?php foreach($categorias as $valor) { ?>
                 <option value="<?= $valor['id']; ?>" <?= ($valor['id'] == $anuncio->getCategoriaId())? 'selected': ''; ?>><?= $valor['nome']; ?></option>
@@ -32,7 +32,7 @@
     </div>
     <div class="row">
         <label for="estado" class="col-3">Estado:</label>
-        <select name="estado" class="col-9">
+        <select name="estado" id="estado" class="col-9">
             <option value="" >Escolha um estado</option>
             <option value="1" <?= ($anuncio->getEstado() == 1) ? 'selected': ''; ?>>Ruim</option>
             <option value="2" <?= ($anuncio->getEstado() == 2) ? 'selected': ''; ?>>Bom</option>

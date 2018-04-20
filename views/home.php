@@ -6,8 +6,8 @@
     <h4 class="side-item">Pesquisar</h4>
     <form method="get" class="side-item">
         <div class="row">
-            <label class="side-item" for="filtros[categoria]">Categoria:</label>
-            <select class="side-item" name="filtros[categoria]">
+            <label class="side-item" for="categoria">Categoria:</label>
+            <select class="side-item" id="categoria" name="filtros[categoria]">
                 <option></option>
                 <?php foreach ($categorias as $cat): ?>
                     <option value="<?= $cat['id']; ?>"><?= $cat['nome']; ?></option>
@@ -15,11 +15,11 @@
             </select>
         </div>
         <div class="row">
-            <label class="side-item" for="filtros[minpreco]">Preço minimo:</label>
+            <label class="side-item" for="minpreco">Preço minimo:</label>
             <input class="side-item" id="minpreco" type="text" name="filtros[minpreco]" />
         </div>
         <div class="row">
-            <label class="side-item" for="filtros[maxpreco]">Preço maximo:</label>
+            <label class="side-item" for="maxpreco">Preço maximo:</label>
             <input class="side-item" id="maxpreco" type="text" name="filtros[maxpreco]" />
         </div>
         <div class="row">

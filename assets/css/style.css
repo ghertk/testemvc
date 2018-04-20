@@ -2,7 +2,7 @@
     text-decoration: none;
     margin: 0;
     padding: 0;
-    font-family: Arial, Verdana;
+    font-family: Arial, Verdana, Serif;
     box-sizing: border-box;
 }
 
@@ -97,15 +97,7 @@ nav > ul > li:hover {
 .error {
     background-color: #FF9999;
     border: 2px solid red;
-}
-
-.success {
-    background-color: lawngreen;
-    border: 2px solid limegreen;
-}
-
-.error, .success {
-    padding: 16px 0px;
+    padding: 16px 0;
     border-radius: 10px;
 }
 
