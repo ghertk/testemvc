@@ -6,7 +6,7 @@ class Anuncio extends Model {
     private $descricao;
     private $estado;
     private $imgname;
-    private $usuario;
+    private $usuario = 0;
 
     public function __construct() {
         parent::__construct();
@@ -166,13 +166,15 @@ class Anuncio extends Model {
         $sql->bindValue(":id", $id);
         $sql->execute();
         $anuncio = $sql->fetchAll(PDO::FETCH_ASSOC);
-        $anuncio = $anuncio[0];
-        $this->usuario = $anuncio['usuario_id'];
-        $this->categoriaId = $anuncio['categoria_id'];
-        $this->titulo = $anuncio['titulo'];
-        $this->descricao = $anuncio['descricao'];
-        $this->valor = $anuncio['valor'];
-        $this->estado = $anuncio['estado'];
-        $this->imgname = $anuncio['imgsrc'];
+        if (!empty($anuncio)) {
+            $anuncio = $anuncio[0];
+            $this->usuario = $anuncio['usuario_id'];
+            $this->categoriaId = $anuncio['categoria_id'];
+            $this->titulo = $anuncio['titulo'];
+            $this->descricao = $anuncio['descricao'];
+            $this->valor = $anuncio['valor'];
+            $this->estado = $anuncio['estado'];
+            $this->imgname = $anuncio['imgsrc'];
+        }
     }
 }

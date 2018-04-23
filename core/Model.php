@@ -1,5 +1,5 @@
 <?php
-class Model {
+abstract class Model {
     protected $bd;
 
     public function __construct() {

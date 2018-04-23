@@ -28,7 +28,7 @@ class anunciosController extends Controller {
 
         if (!empty($_POST)) {
             if(!$erros) {
-                if ($anuncio->cadastrar()) {
+                if ($anuncio->cadastrar($_SESSION['cLogin'])) {
                      header('Location: '.BASE_URL.'anuncios');
                      die();
                 }
@@ -49,18 +49,25 @@ class anunciosController extends Controller {
         Core::isLogado();
 
         $categoria = new Categoria();
-        $retorno = $this->validarFormularioAnuncio();
-        $anuncio = $retorno[0];
-        $erros = $retorno[2];
+        $anuncio = new Anuncio();
         $imagem = new Imagem();
-
-        if (!empty($_FILES['imagem'])) {
-            $anuncio->buscarImgname($param);
-            $imagem->alterar($_FILES['imagem'], $anuncio->getImgname());
-            $anuncio->setImgname($imagem->getNome());
-        }
+        $erros = false;
+        $mensagens = array();
 
         if (!empty($_POST)) {
+            $retorno = $this->validarFormularioAnuncio();
+            $anuncio = $retorno[0];
+
+            if (!empty($_FILES['imagem']['tmp_name'])) {
+                $anuncio->buscarImgname($param);
+                $imagem->alterar($_FILES['imagem'], $anuncio->getImgname());
+                $anuncio->setImgname($imagem->getNome());
+            } else {
+                $anuncio->buscarImgname($param);
+                $anuncio->setImgname($anuncio->getImgname());
+            }
+            $mensagens = $retorno[1];
+            $erros = $retorno[2];
             if(!$erros) {
                 if ($anuncio->alterar($param)) {
                     header('Location: '.BASE_URL.'anuncios');
@@ -69,17 +76,16 @@ class anunciosController extends Controller {
             }
         }
 
-        $dados = array(
-            'anuncio' => $anuncio,
-            'mensagem' => $retorno[1],
-            'erros' => $erros
-        );
-
         $anuncio->getAnuncio($param);
         if ($anuncio->getUsuario() != $_SESSION['cLogin']) {
             echo "Acesso negado";
             die();
         }
+        $dados = array(
+            'anuncio' => $anuncio,
+            'mensagem' => $mensagens,
+            'erros' => $erros
+        );
 
         $dados['categorias'] = $categoria->getLista();
         $this->loadTemplate('alterarAnuncio', $dados);
@@ -153,17 +159,17 @@ class anunciosController extends Controller {
 
     public function remover($param) {
         Core::isLogado();
+
         $anuncio = new Anuncio();
         $anuncio->getAnuncio($param);
         $imagem = new Imagem();
-        $imagem->remover($anuncio->getImgname());
 
         if ($anuncio->getUsuario() == $_SESSION['cLogin']) {
-            echo "ok";
             $anuncio->remover($param);
-            header('Location: '.BASE_URL.'anuncios');
-            die();
+            $imagem->remover($anuncio->getImgname());
         }
+        header('Location: '.BASE_URL.'anuncios');
+        die();
     }
 
     private function validarCategoria($categoria) {
