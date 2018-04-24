@@ -33,7 +33,7 @@ class cadastroController extends Controller {
             if ($this->validarSenha()) {
                 $senha = $_POST['senha'];
             } else {
-                $mensagem[] = 'Campo de senha deve ser preenchido';
+                $mensagem[] = 'Senha invalida';
                 $dados['erro'] = true;
             }
 
@@ -47,6 +47,7 @@ class cadastroController extends Controller {
                 }
             }
         }
+        $dados['mensagem'] = $mensagem;
         $this->loadTemplate('cadastro', $dados);
     }
 

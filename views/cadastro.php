@@ -1,11 +1,9 @@
 <?php if($erro): ?>
-    <div class="error">
-        <ul>
-            <?php foreach ($mensagem as $chave => $valor) {?>
-                <li><?= $valor; ?></li>
-            <?php }?>
-        </ul>
-    </div>
+    <?php foreach ($mensagem as $chave => $valor) {?>
+        <div class="error">
+            <?= $valor; ?>
+        </div>
+    <?php }?>
 <?php endif; ?>
 
 <form method="POST" action="<?= BASE_URL; ?>cadastro">

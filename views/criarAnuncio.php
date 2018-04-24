@@ -1,11 +1,9 @@
 <?php if($erros): ?>
-    <div class="error">
-        <ul>
-            <?php foreach ($mensagens as $chave => $valor) {?>
-                <li><?= $valor; ?></li>
-            <?php }?>
-        </ul>
-    </div>
+    <?php foreach ($mensagens as $chave => $valor) {?>
+        <div class="error">
+            <?= $valor; ?>
+        </div>
+    <?php }?>
 <?php endif; ?>
 
 <form method="POST" enctype="multipart/form-data">

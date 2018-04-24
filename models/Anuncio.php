@@ -177,4 +177,11 @@ class Anuncio extends Model {
             $this->imgname = $anuncio['imgsrc'];
         }
     }
+
+    public static function getNum() {
+        global $bd;
+        $sql = $bd->prepare("SELECT count(*) FROM anuncio");
+        $sql->execute();
+        return $sql->fetch()[0];
+    }
 }

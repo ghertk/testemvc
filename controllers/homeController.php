@@ -10,7 +10,7 @@ class homeController extends Controller {
             $anuncios = $anuncio->getLista();
         }
         $dados = array();
-        $dados['numAnuncios'] = count($anuncios);
+        $dados['numAnuncios'] = Anuncio::getNum();
         $dados['anuncios'] = $anuncios;
         $dados['categorias'] = $categoria->getLista();
         $this->loadTemplate('home', $dados);

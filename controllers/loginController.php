@@ -3,11 +3,14 @@ class loginController extends Controller {
     public function index() {
         $usuario = new Usuario();
         $dados = array(
+            'email' => '',
             'mensagem' => '',
             'mostrar' => false
         );
 
         if (!empty($_POST)) {
+            $id = 0;
+            $dados['email'] = $_POST['email'];
             if (!empty($_POST['email']) && !empty($_POST['senha'])) {
                 $id = $usuario->logar($_POST['email'], $_POST['senha']);
             }
